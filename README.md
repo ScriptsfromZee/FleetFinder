@@ -7,7 +7,7 @@ This project is perfect for learning about REST APIs, practicing CRUD operations
 
 ## How to Use
 
-To test the API endpoints, you need to clone this repository, run the server locally, and then use the Postman collection to make requests.
+To test the API endpoints, you need to clone this repository, run the server locally and then use the Postman collection to make requests.
 
 ## Features
 
