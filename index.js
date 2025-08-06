@@ -19,6 +19,7 @@ app.get('/cars/random_car', (req, res) => {
 
 });
 
+// Get car(s) by manufacturer(s)
 app.get('/cars/by-manufacturer', (req, res) => {
   const manufacturers = req.query.manufacturers;
 
@@ -40,7 +41,7 @@ app.get('/cars/by-manufacturer', (req, res) => {
   res.json(matchedCars);
 });
 
-// Get cars by colour
+// Get car(s) by colour(s)
 app.get('/cars/by-colour', (req, res) => {
   const colours = req.query.colours;
 
