@@ -18,7 +18,7 @@
     "name": "Nissan 350Z",
     "manufacturer": "Nissan",
     "top_speed": "155 mph",
-    "colour": "Silver"
+    "colour": "Teal"
   },
   {
     "id": 4,
@@ -348,12 +348,5 @@
     "manufacturer": "Toyota",
     "top_speed": "112 mph",
     "colour": "White"
-  },
-  {
-    "name": "Ferrari 458 Italia",
-    "manufacturer": "Ferrari",
-    "top_speed": "210 mph",
-    "colour": "Red",
-    "id": 51
   }
 ]

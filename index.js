@@ -82,27 +82,64 @@ app.get('/cars/by-colour', (req, res) => {
 
 // Add a new car
 app.post('/cars', (req, res) => {
-  const newCar = req.body;
-  const cars = JSON.parse(fs.readFileSync('./cars.json', 'utf-8'));
+  const { name, manufacturer, top_speed, colour } = req.body;
 
-  //This prevents you from adding a car with the same name & manufacturer
+  // Check required fields
+  const missingFields = [];
+  if (!name) missingFields.push('name');
+  if (!manufacturer) missingFields.push('manufacturer');
+  if (!top_speed) missingFields.push('top_speed');
+  if (!colour) missingFields.push('colour');
+
+  if (missingFields.length > 0) {
+    return res.status(400).json({ error: `Missing required field(s): ${missingFields.join(', ')}` });
+  }
+
+  // Validate and normalize top_speed
+  const speedRegex = /^(\d+(\.\d+)?)\s*mph$/i;
+  let speedString;
+  if (typeof top_speed === 'string') {
+    const match = top_speed.trim().match(speedRegex);
+    if (!match) {
+      return res.status(400).json({ error: "top_speed must be a number followed by 'mph', e.g. '210 mph'" });
+    }
+    // Normalize to one space before mph
+    speedString = `${match[1]} mph`;
+  } else if (typeof top_speed === 'number') {
+    speedString = `${top_speed} mph`;
+  } else {
+    return res.status(400).json({ error: "top_speed must be a string ending with 'mph' or a number" });
+  }
+
+  // Duplicate check
+  const cars = JSON.parse(fs.readFileSync('./cars.json', 'utf-8'));
   const duplicate = cars.find(
-    car => car.name.toLowerCase() === newCar.name.toLowerCase() &&
-           car.manufacturer.toLowerCase() === newCar.manufacturer.toLowerCase()
+    car => car.name.toLowerCase() === name.toLowerCase() &&
+           car.manufacturer.toLowerCase() === manufacturer.toLowerCase()
   );
 
   if (duplicate) {
     return res.status(400).json({ error: 'Car already exists.' });
   }
 
-  // Automatically assign a new ID to the new car
+  // Assign new ID to the new car
   const newId = cars.length > 0 ? Math.max(...cars.map(c => c.id)) + 1 : 1;
-  newCar.id = newId;
+
+  const newCar = {
+    id: newId,
+    name,
+    manufacturer,
+    top_speed: speedString,
+    colour
+  };
 
   cars.push(newCar);
   fs.writeFileSync('./cars.json', JSON.stringify(cars, null, 2));
 
-  res.status(201).json({ message: 'Car added successfully', car: newCar });
+  res.status(201).json({
+    message: 'Car added successfully',
+    ...newCar
+  });
 });
 
 // Update an existing car
@@ -117,10 +154,27 @@ app.put('/cars/:id', (req, res) => {
     return res.status(404).json({ error: 'Car not found' });
   }
 
+  // If top_speed is being updated, validate and normalize it
+  if (updatedFields.top_speed !== undefined) {
+    const ts = updatedFields.top_speed;
+    const speedRegex = /^(\d+(\.\d+)?)\s*mph$/i;
+    if (typeof ts === 'string') {
+      const match = ts.trim().match(speedRegex);
+      if (!match) {
+        return res.status(400).json({ error: "top_speed must be a number followed by 'mph', e.g. '210 mph'" });
+      }
+      updatedFields.top_speed = `${match[1]} mph`;
+    } else if (typeof ts === 'number') {
+      updatedFields.top_speed = `${ts} mph`;
+    } else {
+      return res.status(400).json({ error: "top_speed must be a string ending with 'mph' or a number" });
+    }
+  }
+
   cars[carIndex] = { ...cars[carIndex], ...updatedFields };
   fs.writeFileSync('./cars.json', JSON.stringify(cars, null, 2));
 
-  res.json({ message: 'Car updated Successfully', car: cars[carIndex] });
+  res.json({ message: 'Car updated successfully', car: cars[carIndex] });
 });
 
 // Delete a car
