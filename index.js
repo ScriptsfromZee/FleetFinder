@@ -6,8 +6,26 @@ const port = 3000;
 const cars = require('./cars.json');
 
 app.get('/cars', (req, res) => {
+  let cars = JSON.parse(fs.readFileSync('./cars.json', 'utf-8'));
+
+  // Check if unit query param exists
+  const { unit } = req.query;
+
+  if (unit && unit.toLowerCase() === 'kmh') {
+    cars = cars.map(car => {
+      // Extract numeric value from top_speed string
+      const speedMph = parseFloat(car.top_speed);
+      const speedKmh = Math.round(speedMph * 1.60934);
+      return {
+        ...car,
+        top_speed: `${speedKmh} km/h`
+      };
+    });
+  }
+
   res.json(cars);
 });
+
 
 app.use(express.json());
 
