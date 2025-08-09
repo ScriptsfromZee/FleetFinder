@@ -68,7 +68,17 @@ app.post('/cars', (req, res) => {
   const newCar = req.body;
   const cars = JSON.parse(fs.readFileSync('./cars.json', 'utf-8'));
 
-  // Automatically assign a new ID (max + 1)
+  //This prevents you from adding a car with the same name & manufacturer
+  const duplicate = cars.find(
+    car => car.name.toLowerCase() === newCar.name.toLowerCase() &&
+           car.manufacturer.toLowerCase() === newCar.manufacturer.toLowerCase()
+  );
+
+  if (duplicate) {
+    return res.status(400).json({ error: 'Car already exists.' });
+  }
+
+  // Automatically assign a new ID to the new car
   const newId = cars.length > 0 ? Math.max(...cars.map(c => c.id)) + 1 : 1;
   newCar.id = newId;
 
