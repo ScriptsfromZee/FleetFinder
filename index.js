@@ -26,7 +26,6 @@ app.get('/cars', (req, res) => {
   res.json(cars);
 });
 
-
 app.use(express.json());
 
 // Get random car
@@ -140,14 +139,28 @@ app.delete('/cars/:id', (req, res) => {
   res.json({ message: 'Car deleted successfully' });
 });
 
-// Get multiple cars by IDs
+// Get cars by multiple IDs
 app.get('/cars/by-ids', (req, res) => {
   const ids = req.query.ids;
+  if (!ids) {
+    return res.status(400).json({ error: 'Please provide one or more IDs in the query' });
+  }
+
   const allCars = JSON.parse(fs.readFileSync('./cars.json', 'utf-8'));
   const idArray = ids.split(',').map(id => parseInt(id.trim()));
-  const matchedCars = allCars.filter(car => idArray.includes(car.id));
 
-  res.json(matchedCars);
+  const matchedCars = allCars.filter(car => idArray.includes(car.id));
+  const foundIds = matchedCars.map(car => car.id);
+  const missingIds = idArray.filter(id => !foundIds.includes(id));
+
+  if (missingIds.length) {
+    res.status(206).json({
+      cars: matchedCars,
+      message: `No car found for ID(s): ${missingIds.join(', ')}`
+    });
+  } else {
+    res.json({ cars: matchedCars });
+  }
 });
 
 // Get car by ID
