@@ -70,7 +70,6 @@ app.get('/cars/by-manufacturer', (req, res) => {
   res.json({ cars: matchedCars });
 });
 
-
 // Get car(s) by colour(s)
 app.get('/cars/by-colour', (req, res) => {
   const colours = req.query.colours;
@@ -104,7 +103,6 @@ app.get('/cars/by-colour', (req, res) => {
 
   res.json({ cars: matchedCars });
 });
-
 
 // Add a new car to the list
 app.post('/cars', (req, res) => {
@@ -214,7 +212,6 @@ app.put('/cars/:id', (req, res) => {
   res.json({ message: 'Car updated successfully', car: cars[carIndex] });
 });
 
-
 // Delete a car from the list
 app.delete('/cars/:id', (req, res) => {
   const id = parseInt(req.params.id);
@@ -275,5 +272,5 @@ app.get('/cars/:id', (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Blur Car API running at http://localhost:${port}`);
+  console.log(`FleetFinder API running at http://localhost:${port}`);
 });
