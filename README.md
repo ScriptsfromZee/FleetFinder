@@ -13,7 +13,7 @@ To test the API endpoints, you need to clone this repository, run the server loc
 
 - Get all cars
 - Get a random car
-- Search cars by manufacturer, colour or ID
+- Search cars by manufacturer(s), colour(s) or ID(s)
 - Add new cars
 - Update existing cars
 - Delete cars
@@ -35,6 +35,8 @@ npm install
 node index.js
 
 The API will be running at [http://localhost:3000]
+
+Prerequisite: Ensure you have Node.js installed.
 
 ## Testing the API with Postman
 
