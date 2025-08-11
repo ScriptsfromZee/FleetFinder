@@ -51,12 +51,29 @@ app.get('/cars/by-manufacturer', (req, res) => {
     manufacturerArray.includes(car.manufacturer.toLowerCase())
   );
 
+  // Find invalid manufacturers
+  const existingManufacturers = [...new Set(cars.map(c => c.manufacturer.toLowerCase()))];
+  const invalidManufacturers = manufacturerArray.filter(m => !existingManufacturers.includes(m));
+
+  // If *all* are invalid
   if (matchedCars.length === 0) {
-    return res.status(404).json({ error: `No cars found for manufacturers: ${manufacturers}` });
+    return res.status(404).json({
+      error: `No cars found for manufacturers: ${manufacturers}`,
+    });
   }
 
+  // If some are invalid, return both cars and warning
+  if (invalidManufacturers.length > 0) {
+    return res.json({
+      warning: `Some manufacturers not found: ${invalidManufacturers.join(', ')}`,
+      cars: matchedCars
+    });
+  }
+
+  // If all are valid
   res.json(matchedCars);
 });
+
 
 // Get car(s) by colour(s)
 app.get('/cars/by-colour', (req, res) => {
@@ -73,12 +90,29 @@ app.get('/cars/by-colour', (req, res) => {
     colourArray.includes(car.colour.toLowerCase())
   );
 
+  const existingColours = [...new Set(matchedCars.map(car => car.colour.toLowerCase()))];
+  const invalidColours = colourArray.filter(c => !existingColours.includes(c));
+
+  // Case: No matches at all
   if (matchedCars.length === 0) {
-    return res.status(404).json({ error: `No cars found in the colours: ${colours}` });
+    return res.status(404).json({
+      error: `No cars found in the colours: ${invalidColours.join(', ')}`
+    });
   }
 
+  // Case: Partial match — return 206 Partial Content
+  if (invalidColours.length > 0) {
+    return res.status(206).json({
+      cars: matchedCars,
+      message: `No cars found in the colours: ${invalidColours.join(', ')}`
+    });
+  }
+
+  // Case: All matches
   res.json(matchedCars);
 });
+
+
 
 // Add a new car
 app.post('/cars', (req, res) => {
