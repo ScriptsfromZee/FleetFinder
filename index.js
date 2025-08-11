@@ -51,27 +51,23 @@ app.get('/cars/by-manufacturer', (req, res) => {
     manufacturerArray.includes(car.manufacturer.toLowerCase())
   );
 
-  // Find invalid manufacturers
   const existingManufacturers = [...new Set(cars.map(c => c.manufacturer.toLowerCase()))];
   const invalidManufacturers = manufacturerArray.filter(m => !existingManufacturers.includes(m));
 
-  // If *all* are invalid
   if (matchedCars.length === 0) {
     return res.status(404).json({
-      error: `No cars found for manufacturers: ${manufacturers}`,
+      error: `No cars found for manufacturers: ${manufacturers}`
     });
   }
 
-  // If some are invalid, return both cars and warning
   if (invalidManufacturers.length > 0) {
-    return res.json({
-      warning: `Some manufacturers not found: ${invalidManufacturers.join(', ')}`,
+    return res.status(206).json({
+      error: `Some manufacturers not found: ${invalidManufacturers.join(', ')}`,
       cars: matchedCars
     });
   }
 
-  // If all are valid
-  res.json(matchedCars);
+  res.json({ cars: matchedCars });
 });
 
 
@@ -93,25 +89,21 @@ app.get('/cars/by-colour', (req, res) => {
   const existingColours = [...new Set(matchedCars.map(car => car.colour.toLowerCase()))];
   const invalidColours = colourArray.filter(c => !existingColours.includes(c));
 
-  // Case: No matches at all
   if (matchedCars.length === 0) {
     return res.status(404).json({
-      error: `No cars found in the colours: ${invalidColours.join(', ')}`
+      error: `No cars found in the colours: ${colours}`
     });
   }
 
-  // Case: Partial match — return 206 Partial Content
   if (invalidColours.length > 0) {
     return res.status(206).json({
-      cars: matchedCars,
-      message: `No cars found in the colours: ${invalidColours.join(', ')}`
+      error: `No cars found in the colours: ${invalidColours.join(', ')}`,
+      cars: matchedCars
     });
   }
 
-  // Case: All matches
-  res.json(matchedCars);
+  res.json({ cars: matchedCars });
 });
-
 
 
 // Add a new car
@@ -176,6 +168,8 @@ app.post('/cars', (req, res) => {
   });
 });
 
+
+// Update an existing car
 // Update an existing car
 app.put('/cars/:id', (req, res) => {
   const id = parseInt(req.params.id);
@@ -192,16 +186,23 @@ app.put('/cars/:id', (req, res) => {
   if (updatedFields.top_speed !== undefined) {
     const ts = updatedFields.top_speed;
     const speedRegex = /^(\d+(\.\d+)?)\s*mph$/i;
+
     if (typeof ts === 'string') {
+      // Check if string matches pattern like '510 mph'
       const match = ts.trim().match(speedRegex);
-      if (!match) {
-        return res.status(400).json({ error: "top_speed must be a number followed by 'mph', e.g. '210 mph'" });
+      if (match) {
+        updatedFields.top_speed = `${match[1]} mph`;
+      } else if (/^\d+(\.\d+)?$/.test(ts.trim())) {
+        // If string is only digits (e.g., "510"), convert to '510 mph'
+        updatedFields.top_speed = `${ts.trim()} mph`;
+      } else {
+        return res.status(400).json({ error: "top_speed must be a number or a string like '210 mph'" });
       }
-      updatedFields.top_speed = `${match[1]} mph`;
     } else if (typeof ts === 'number') {
+      // If number, convert to 'number mph'
       updatedFields.top_speed = `${ts} mph`;
     } else {
-      return res.status(400).json({ error: "top_speed must be a string ending with 'mph' or a number" });
+      return res.status(400).json({ error: "top_speed must be a number or a string ending with 'mph'" });
     }
   }
 
@@ -210,6 +211,7 @@ app.put('/cars/:id', (req, res) => {
 
   res.json({ message: 'Car updated successfully', car: cars[carIndex] });
 });
+
 
 // Delete a car
 app.delete('/cars/:id', (req, res) => {
@@ -241,16 +243,21 @@ app.get('/cars/by-ids', (req, res) => {
   const foundIds = matchedCars.map(car => car.id);
   const missingIds = idArray.filter(id => !foundIds.includes(id));
 
-  if (missingIds.length) {
-    res.status(206).json({
-      cars: matchedCars,
-      message: `No car found for ID(s): ${missingIds.join(', ')}`
+  if (matchedCars.length === 0) {
+    return res.status(404).json({
+      error: `No car found for ID(s): ${missingIds.join(', ')}`
     });
-  } else {
-    res.json({ cars: matchedCars });
   }
-});
 
+  if (missingIds.length > 0) {
+    return res.status(206).json({
+      error: `No car found for ID(s): ${missingIds.join(', ')}`,
+      cars: matchedCars
+    });
+  }
+
+  res.json({ cars: matchedCars });
+});
 // Get car by ID
 app.get('/cars/:id', (req, res) => {
   const id = parseInt(req.params.id);
