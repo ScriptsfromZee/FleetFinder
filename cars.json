@@ -348,5 +348,12 @@
     "manufacturer": "Toyota",
     "top_speed": "112 mph",
     "colour": "White"
+  },
+  {
+    "id": 51,
+    "name": "Ferrari 458 Italia",
+    "manufacturer": "Ferrari",
+    "top_speed": "310 mph",
+    "colour": "Neon"
   }
 ]

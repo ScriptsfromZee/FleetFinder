@@ -167,7 +167,7 @@ app.post('/cars', (req, res) => {
 });
 
 // Update an existing car in the list
-app.put('/cars/:id', (req, res) => {
+app.patch('/cars/:id', (req, res) => {
   const id = parseInt(req.params.id);
   const updatedFields = req.body;
 
