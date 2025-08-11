@@ -28,7 +28,7 @@ app.get('/cars', (req, res) => {
 
 app.use(express.json());
 
-// Get random car
+// Get a random car from the list
 app.get('/cars/random_car', (req, res) => {
   const cars = JSON.parse(fs.readFileSync('./cars.json', 'utf-8'));
   const randomIndex = Math.floor(Math.random() * cars.length);
@@ -106,7 +106,7 @@ app.get('/cars/by-colour', (req, res) => {
 });
 
 
-// Add a new car
+// Add a new car to the list
 app.post('/cars', (req, res) => {
   const { name, manufacturer, top_speed, colour } = req.body;
 
@@ -137,7 +137,7 @@ app.post('/cars', (req, res) => {
     return res.status(400).json({ error: "top_speed must be a string ending with 'mph' or a number" });
   }
 
-  // Duplicate check
+  // Duplicate check for name and manufacturer
   const cars = JSON.parse(fs.readFileSync('./cars.json', 'utf-8'));
   const duplicate = cars.find(
     car => car.name.toLowerCase() === name.toLowerCase() &&
@@ -168,9 +168,7 @@ app.post('/cars', (req, res) => {
   });
 });
 
-
-// Update an existing car
-// Update an existing car
+// Update an existing car in the list
 app.put('/cars/:id', (req, res) => {
   const id = parseInt(req.params.id);
   const updatedFields = req.body;
@@ -188,18 +186,22 @@ app.put('/cars/:id', (req, res) => {
     const speedRegex = /^(\d+(\.\d+)?)\s*mph$/i;
 
     if (typeof ts === 'string') {
+
       // Check if string matches pattern like '510 mph'
       const match = ts.trim().match(speedRegex);
       if (match) {
         updatedFields.top_speed = `${match[1]} mph`;
       } else if (/^\d+(\.\d+)?$/.test(ts.trim())) {
-        // If string is only digits (e.g., "510"), convert to '510 mph'
+
+        // If string is only digits then convert to '510 mph'
+
         updatedFields.top_speed = `${ts.trim()} mph`;
       } else {
         return res.status(400).json({ error: "top_speed must be a number or a string like '210 mph'" });
       }
     } else if (typeof ts === 'number') {
-      // If number, convert to 'number mph'
+
+      // If only number is provided, convert to 'number mph'
       updatedFields.top_speed = `${ts} mph`;
     } else {
       return res.status(400).json({ error: "top_speed must be a number or a string ending with 'mph'" });
@@ -213,7 +215,7 @@ app.put('/cars/:id', (req, res) => {
 });
 
 
-// Delete a car
+// Delete a car from the list
 app.delete('/cars/:id', (req, res) => {
   const id = parseInt(req.params.id);
   let cars = JSON.parse(fs.readFileSync('./cars.json', 'utf-8'));
@@ -258,7 +260,8 @@ app.get('/cars/by-ids', (req, res) => {
 
   res.json({ cars: matchedCars });
 });
-// Get car by ID
+
+// Get car from the list by ID
 app.get('/cars/:id', (req, res) => {
   const id = parseInt(req.params.id);
   const cars = JSON.parse(fs.readFileSync('./cars.json', 'utf-8'));
