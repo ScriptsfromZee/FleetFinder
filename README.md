@@ -36,7 +36,7 @@ node index.js
 
 The API will be running at [http://localhost:3000]
 
-Prerequisite: Ensure you have Node.js installed.
+**Prerequisite:** Ensure you have Node.js installed.
 
 ## Testing the API with Postman
 
