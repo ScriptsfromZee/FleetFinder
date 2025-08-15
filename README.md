@@ -7,7 +7,33 @@ This project is perfect for learning about REST APIs, practicing CRUD operations
 
 ## How to Use
 
-To test the API endpoints, you need to clone this repository, run the server locally and then use the Postman collection to make requests.
+You have two ways to try the API:
+
+### Run Online (no local setup)
+
+Open the Postman collection: https://documenter.getpostman.com/view/33991153/2sB3BBrCCZ
+
+**Note:** Your first response may take some time as the server goes to sleep after a few minutes of inactivity.
+
+Click “Run in Postman”. 
+
+Ensure https://fleetfinder.onrender.com is set as a variable preferably as {{baseUrl}} to save time. 
+
+Send requests directly. 
+
+### Run locally
+
+Clone the repo: git clone https://github.com/ScriptsfromZee/FleetFinder
+
+cd FleetFinder
+
+Install dependencies: npm install
+
+Start the server: node index.js
+
+The API will be running at http://localhost:3000
+
+You can now use the same Postman collection and switch/set  the base URL to http://localhost:3000.
 
 ## Features
 
@@ -18,33 +44,7 @@ To test the API endpoints, you need to clone this repository, run the server loc
 - Update existing cars
 - Delete cars
 
-## Getting Started
-
-### 1. Clone the repository
-
-git clone https://github.com/ScriptsfromZee/FleetFinder
-
-cd FleetFinder
-
-### 2. Install dependencies
-
-npm install
-
-### 3. Start the server
-
-node index.js
-
-The API will be running at [http://localhost:3000]
-
-**Prerequisite:** Ensure you have Node.js installed.
-
-## Testing the API with Postman
-
-After starting your server, you can use the Postman collection to easily test all the endpoints.
-
-https://documenter.getpostman.com/view/33991153/2sB3BBrCCZ
-
-Make sure the server is running locally before sending requests from Postman.
+Make sure the server is running locally before sending requests from Postman. If you make changes to the code, you need to restart your server. 
 
 ## About the Data
 
