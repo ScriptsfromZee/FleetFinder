@@ -1,7 +1,8 @@
 const express = require('express');
 const fs = require('fs');
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
+
 
 const cars = require('./cars.json');
 
@@ -269,6 +270,10 @@ app.get('/cars/:id', (req, res) => {
   } else {
     res.status(404).json({ error: 'Car not found' });
   }
+});
+
+app.get('/', (req, res) => {
+  res.send('FleetFinder API is running');
 });
 
 app.listen(port, () => {
