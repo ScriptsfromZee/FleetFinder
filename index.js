@@ -12,20 +12,28 @@ app.get('/cars', (req, res) => {
   // Check if unit query param exists
   const { unit } = req.query;
 
-  if (unit && unit.toLowerCase() === 'kmh') {
-    cars = cars.map(car => {
-      // Extract numeric value from top_speed string
-      const speedMph = parseFloat(car.top_speed);
-      const speedKmh = Math.round(speedMph * 1.60934);
-      return {
-        ...car,
-        top_speed: `${speedKmh} km/h`
-      };
-    });
+  if (unit) {
+    if (unit.toLowerCase() === 'kmh') {
+      cars = cars.map(car => {
+        // Extract numeric value from top_speed string
+        const speedMph = parseFloat(car.top_speed);
+        const speedKmh = Math.round(speedMph * 1.60934);
+        return {
+          ...car,
+          top_speed: `${speedKmh} km/h`
+        };
+      });
+    } else if (unit.toLowerCase() !== 'mph') {
+      // If invalid unit provided
+      return res.status(404).json({
+        error: `Unit "${unit}" is not supported. leave blank , use "mph" or "kmh".`
+      });
+    }
   }
 
   res.json(cars);
 });
+
 
 app.use(express.json());
 
