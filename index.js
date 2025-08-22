@@ -25,14 +25,15 @@ app.get('/cars', (req, res) => {
       });
     } else if (unit.toLowerCase() !== 'mph') {
       // If invalid unit provided
-      return res.status(404).json({
-        error: `Unit '${unit}' is not supported. leave blank , use 'mph' or 'kmh'.`
+      return res.status(400).json({
+        error: `'${unit}' is not supported. Leave the unit blank or you can use 'mph' or 'kmh'.`
       });
     }
   }
 
   res.json(cars);
 });
+
 
 
 app.use(express.json());
