@@ -26,7 +26,7 @@ app.get('/cars', (req, res) => {
     } else if (unit.toLowerCase() !== 'mph') {
       // If invalid unit provided
       return res.status(404).json({
-        error: `Unit "${unit}" is not supported. leave blank , use "mph" or "kmh".`
+        error: `Unit '${unit}' is not supported. leave blank , use 'mph' or 'kmh'.`
       });
     }
   }
