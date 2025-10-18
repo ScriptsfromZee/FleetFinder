@@ -3,7 +3,6 @@ const fs = require('fs');
 const app = express();
 const port = process.env.PORT || 3000;
 
-
 const cars = require('./cars.json');
 
 app.get('/cars', (req, res) => {
@@ -33,8 +32,6 @@ app.get('/cars', (req, res) => {
 
   res.json(cars);
 });
-
-
 
 app.use(express.json());
 
