@@ -282,7 +282,7 @@ app.get('/', (req, res) => {
   res.send('FleetFinder API is running');
 });
 
-pp.use((req, res) => {
+app.use((req, res) => {
   res.status(404).json({
     error: 'Route not found'
   });
